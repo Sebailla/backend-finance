@@ -1,4 +1,4 @@
-import { Module, OnApplicationBootstrap } from '@nestjs/common';
+import { Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -24,14 +24,14 @@ export class AppModule implements OnApplicationBootstrap {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) { }
 
   async onApplicationBootstrap() {
-    // Saco la URL de la conexión
+
+    const logger = new Logger('Bootstrap')
+    
+    // URL connection
     const url = process.env.DATABASE_URL!;
     const dbUrl = new URL(url);
-    const dbName = dbUrl.pathname.replace('/', '');
-    console.log(
-      colors.bgGreen.black(
-        `✅ Connection successfully established to the database name: ${colors.bgYellow.bold(dbName)}`
-      )
-    );
+    const dbName = dbUrl.pathname.replace('/', '')
+
+    logger.log(colors.bgGreen.black(`Connection successfully, database name: ${colors.bgYellow.bold(dbName)}`))
   }
 }
