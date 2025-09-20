@@ -6,6 +6,7 @@ import { InjectDataSource, TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './index'
 import colors from 'colors'
 import { DataSource } from 'typeorm'
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DataSource } from 'typeorm'
     TypeOrmModule.forRootAsync({
       useFactory: typeORMConfig,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
