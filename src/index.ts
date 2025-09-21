@@ -6,7 +6,6 @@ export * from './auth/auth.module';
 export * from './auth/auth.service';
 export * from './auth/decorators/auth.decorator';
 export * from './auth/decorators/get-user.decorator';
-export * from './auth/decorators/raw-headers.decorator';
 export * from './auth/decorators/role-protected.decorator';
 export * from './auth/dto/create-user.dto';
 export * from './auth/dto/login.dto';

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Req, RequestMethod, HttpCode, HttpStatus} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,6 +8,12 @@ import { UpdatePassDto } from './dto/update-pass.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateCurrentPassDto } from './dto/update-current-pass.dto';
 import { CheckPassDto } from './dto/check-pass.dto';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from './entities/auth.entity';
+import { UserRoleGuard } from './guards/user-role.guard';
+import { RoleProtected } from './decorators/role-protected.decorator';
+import { ValidRoles } from './interfaces/valid-roles.interface';
+import { Auth } from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -47,39 +53,36 @@ export class AuthController {
   }
 
   @Get('user/:id')
-  @UseGuards(AuthGuard())
+  @Auth(ValidRoles.admin, ValidRoles.user)
   findOne(@Param('id', IdValidationPipe) id: string) {
     return this.authService.findOne(id);
   }
 
   @Post('update-password')
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(ValidRoles.admin, ValidRoles.user)
   updateCurrentUserPassword(
-    @Req() req,
+    @GetUser() user: User,
     @Body() updateCurrentPassDto: UpdateCurrentPassDto
   ) {
-    const id = req.user.id
-    return this.authService.updateCurrentUserPassword( updateCurrentPassDto, id);
+    return this.authService.updateCurrentUserPassword(updateCurrentPassDto, user.id);
   }
 
   @Post('check-password')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(ValidRoles.admin, ValidRoles.user)
   checkPassword(
-    @Req() req, 
+    @GetUser('id') id: string,
     @Body() checkPassDto: CheckPassDto
-  ){
-    const id = req.user.id
+  ) {
     return this.authService.checkPassword(checkPassDto, id)
   }
 
   @Put('user')
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(ValidRoles.admin, ValidRoles.user)
   update(
-    @Req() req,
+    @GetUser() user: User,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    const id = req.user.id
-    return this.authService.update(updateUserDto, id);
+    return this.authService.update(updateUserDto, user.id);
   }
 }

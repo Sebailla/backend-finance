@@ -239,7 +239,7 @@ export class AuthService {
       return user
 
     } catch (error) {
-      logger.log(colors.bgRed.black(error.message))
+      logger.log(colors.bgRed.black(`${error.message} - user: ${id}`))
       throw new BadRequestException(error.message)
     }
   }
@@ -271,7 +271,7 @@ export class AuthService {
 
 
     } catch (error) {
-      logger.log(colors.bgRed.black(error.message))
+      logger.log(colors.bgRed.black(`${error.message} - user: ${id}`))
       throw new BadRequestException(error.message)
     }
   }
@@ -299,11 +299,10 @@ export class AuthService {
       }
 
     } catch (error) {
-      logger.log(colors.bgRed.black(error.message))
+      logger.log(colors.bgRed.black(`${error.message} - user: ${id}`))
       throw new BadRequestException(error.message)
     }
   }
-
 
   async update(updateUserDto: UpdateUserDto, id: string) {
 
@@ -331,19 +330,18 @@ export class AuthService {
       return { message: 'Profile updated successfully' };
 
     } catch (error) {
-      logger.log(colors.bgRed.black(error.message))
+      logger.log(colors.bgRed.black(`${error.message} - user: ${id}`))
       throw new BadRequestException(error.message)
     }
 
   }
 
 
-  //! -  Generador de JWT Token. ---------------
+  //? -  Generador de JWT Token. ---------------
 
   private generateJwt(payload: JwtPayload) {
-
     const token = this.jwtService.sign(payload)
     return token
-
   }
+  //? ------------------------------------------
 }
