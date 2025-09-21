@@ -1,6 +1,8 @@
-import {  IsEmail, IsNotEmpty,IsString, MinLength } from 'class-validator'
+import { PartialType } from "@nestjs/mapped-types";
+import { LoginDto } from "./login.dto";
+import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
 
-export class LoginDto {
+export class UpdatePassDto extends PartialType(LoginDto) {
 
     @IsNotEmpty({ message: 'Email is required' })
     @IsString({ message: 'Invalid email format' })
@@ -11,4 +13,5 @@ export class LoginDto {
     @IsString({ message: 'Password name format' })
     @MinLength(8, { message: 'Minimum password of 8 characters' })
     password: string
+
 }

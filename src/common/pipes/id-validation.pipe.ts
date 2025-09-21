@@ -1,4 +1,4 @@
-import { ArgumentMetadata, BadRequestException, Injectable, ParseUUIDPipe} from '@nestjs/common';
+import { BadRequestException, Injectable, ParseUUIDPipe} from '@nestjs/common';
 
 @Injectable()
 export class IdValidationPipe extends ParseUUIDPipe {

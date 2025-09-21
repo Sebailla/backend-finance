@@ -1,9 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateAuthDto } from './create-auth.dto';
+import { CreateUserDto } from './create-user.dto';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsBoolean, MaxLength, Matches } from 'class-validator';
 
-export class UpdateAuthDto extends PartialType(CreateAuthDto) {
+export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsNotEmpty({ message: 'Name is required' })
     @IsString({ message: 'Invalid name format' })
     name: string
@@ -20,6 +20,11 @@ export class UpdateAuthDto extends PartialType(CreateAuthDto) {
     @IsNotEmpty({ message: 'Password is required' })
     @IsString({ message: 'Password name format' })
     @MinLength(8, { message: 'Minimum password of 8 characters' })
+    @MaxLength(50)
+    @Matches(
+        /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+        message: 'The password must have a Uppercase, lowercase letter and a number'
+    })
     password: string
 
     @IsString({ message: 'Invalid image link format' })

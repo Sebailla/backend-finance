@@ -1,22 +1,26 @@
-import { Controller, Get, Post, Body, Param, Delete, Put} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, Req, RequestMethod, HttpCode, HttpStatus} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { IdValidationPipe } from 'src/common/pipes/id-validation/id-validation.pipe';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { IdValidationPipe } from 'src/common/pipes/id-validation.pipe';
 import { LoginDto } from './dto/login.dto';
+import { UpdatePassDto } from './dto/update-pass.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UpdateCurrentPassDto } from './dto/update-current-pass.dto';
+import { CheckPassDto } from './dto/check-pass.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('register')
-  register(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.register(createAuthDto);
+  register(@Body() createUserDto: CreateUserDto) {
+    return this.authService.register(createUserDto);
   }
 
   @Post('confirm-account')
-  confirmAccount(@Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.confirmAccount(updateAuthDto);
+  confirmAccount(@Body() updateUserDto: UpdateUserDto) {
+    return this.authService.confirmAccount(updateUserDto);
   }
 
   @Post('login')
@@ -24,26 +28,58 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('forgot-password')
+  forgotPassword(@Body() updatePassDto: UpdatePassDto) {
+    return this.authService.forgotPassword(updatePassDto);
+  }
+
+  @Post('validate-token')
+  validateToken(@Body() UpdateUserDto: UpdateUserDto) {
+    return this.authService.validateToken(UpdateUserDto);
+  }
+
+  @Post('reset-password/:token')
+  resetPasswordWithToken(
+    @Param('token') token: string,
+    @Body() UpdateUserDto: UpdateUserDto
+  ) {
+    return this.authService.resetPasswordWithToken(token, UpdateUserDto);
   }
 
   @Get('user/:id')
+  @UseGuards(AuthGuard())
   findOne(@Param('id', IdValidationPipe) id: string) {
     return this.authService.findOne(id);
   }
 
-  @Put('user/:id')
-  update(
-    @Param('id', IdValidationPipe) id: string,
-    @Body() updateAuthDto: UpdateAuthDto
+  @Post('update-password')
+  @UseGuards(AuthGuard('jwt'))
+  updateCurrentUserPassword(
+    @Req() req,
+    @Body() updateCurrentPassDto: UpdateCurrentPassDto
   ) {
-    return this.authService.update(id, updateAuthDto);
+    const id = req.user.id
+    return this.authService.updateCurrentUserPassword( updateCurrentPassDto, id);
   }
 
-  @Delete('user/:id')
-  remove(@Param('id', IdValidationPipe) id: string) {
-    return this.authService.remove(id);
+  @Post('check-password')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  checkPassword(
+    @Req() req, 
+    @Body() checkPassDto: CheckPassDto
+  ){
+    const id = req.user.id
+    return this.authService.checkPassword(checkPassDto, id)
+  }
+
+  @Put('user')
+  @UseGuards(AuthGuard('jwt'))
+  update(
+    @Req() req,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    const id = req.user.id
+    return this.authService.update(updateUserDto, id);
   }
 }
