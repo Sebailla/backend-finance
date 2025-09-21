@@ -335,6 +335,25 @@ export class AuthService {
     }
 
   }
+  
+  async checkAuthStatus( id: string) {
+
+    try {
+
+      const user = await this.userRepository.findOneBy({id})
+
+      return{
+        ...user,
+        token: this.generateJwt({id: user!.id}),
+        message: 'Token OK'
+      }
+
+    } catch (error) {
+      logger.log(colors.bgRed.black(`${error.message} - user: ${id}`))
+      throw new BadRequestException(error.message)
+    }
+
+  }
 
 
   //? -  Generador de JWT Token. ---------------

@@ -85,4 +85,12 @@ export class AuthController {
   ) {
     return this.authService.update(updateUserDto, user.id);
   }
+
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(
+    @GetUser('id') id: string,
+  ){
+    return this.authService.checkAuthStatus(id)
+  }
 }
