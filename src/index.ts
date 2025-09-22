@@ -1,6 +1,6 @@
-export * from './app.controller';
+
 export * from './app.module';
-export * from './app.service';
+
 export * from './auth/auth.controller';
 export * from './auth/auth.module';
 export * from './auth/auth.service';

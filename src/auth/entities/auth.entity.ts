@@ -14,7 +14,7 @@ export class User {
 
     @Column({type: 'varchar',length: 255, nullable: true, default: 'default_profile_image.jpg',
     })
-    image: string // Imagen del producto
+    avatar: string // Imagen del producto
 
     @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
     email: string

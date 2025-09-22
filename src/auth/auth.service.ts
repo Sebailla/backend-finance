@@ -356,6 +356,40 @@ export class AuthService {
   }
 
 
+  //?--------- Google Auth ---------------------
+
+  async validateGoogleUser(profile: {
+    email: string;
+    name: string;
+    lastName: string;
+    avatar: string;
+  }) {
+    let user = await this.userRepository.findOne({ where: { email: profile.email } });
+
+    if (!user) {
+      user = this.userRepository.create({
+        email: profile.email,
+        name: profile.name,
+        lastName: profile.lastName,
+        avatar: profile.avatar,
+        password: '',
+        confirmed: true,
+        isActive: true,
+        role: ['user'],
+        token: '',
+      });
+      await this.userRepository.save(user);
+    }
+
+    // Retornamos user + token JWT
+    const payload = { id: user.id, email: user.email };
+    const token = this.jwtService.sign(payload);
+
+    return { user, token };
+  }
+
+
+
   //? -  Generador de JWT Token. ---------------
 
   private generateJwt(payload: JwtPayload) {

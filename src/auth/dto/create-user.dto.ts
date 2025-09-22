@@ -28,7 +28,7 @@ export class CreateUserDto {
 
     @IsString({ message: 'Invalid image link format' })
     @IsOptional()
-    image: string
+    avatar: string
     
     @IsOptional()
     @IsString({ message: 'Invalid token format' })

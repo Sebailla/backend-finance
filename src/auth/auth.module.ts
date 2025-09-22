@@ -7,6 +7,8 @@ import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import googleOauthConfig from './config/google-oauth.config';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -24,10 +26,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
           }
         }
       }
-    })
+    }),
+    ConfigModule.forFeature(googleOauthConfig)
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [TypeOrmModule, JwtStrategy, PassportModule, JwtModule]
+  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  exports: [TypeOrmModule, JwtStrategy, GoogleStrategy, PassportModule, JwtModule]
 })
 export class AuthModule { }

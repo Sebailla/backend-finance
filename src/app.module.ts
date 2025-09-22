@@ -1,6 +1,4 @@
 import { Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { InjectDataSource, TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './index'
@@ -18,8 +16,8 @@ import { AuthModule } from './auth/auth.module';
     }),
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 
 export class AppModule implements OnApplicationBootstrap {
@@ -29,7 +27,7 @@ export class AppModule implements OnApplicationBootstrap {
 
     const logger = new Logger('Bootstrap')
     
-    // URL connection
+    // URL Database connection
     const url = process.env.DATABASE_URL!;
     const dbUrl = new URL(url);
     const dbName = dbUrl.pathname.replace('/', '')

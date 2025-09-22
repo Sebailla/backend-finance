@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, UseGuards, Req, HttpCode, HttpStatus, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -10,10 +10,9 @@ import { UpdateCurrentPassDto } from './dto/update-current-pass.dto';
 import { CheckPassDto } from './dto/check-pass.dto';
 import { GetUser } from './decorators/get-user.decorator';
 import { User } from './entities/auth.entity';
-import { UserRoleGuard } from './guards/user-role.guard';
-import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interfaces/valid-roles.interface';
 import { Auth } from './decorators/auth.decorator';
+import type { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -93,4 +92,38 @@ export class AuthController {
   ){
     return this.authService.checkAuthStatus(id)
   }
+
+
+//?--------- Google Auth -----------------------------------------
+
+
+  // Paso 1: Redirige a Google
+  @Get('google/login')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {
+    // Passport redirige a Google automáticamente
+  }
+
+  // Paso 2: Callback de Google
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleCallback(@Req() req: Request, @Res() res: Response) {
+    // req.user viene de validate()
+    const { user, token } = req.user as any
+
+    // 👇 Tenés varias opciones:
+    // 1. Mandar JSON directo al frontend:
+    // return res.json({ user, token });
+
+    // 2. Redirigir con el token en query:
+    /*  return res.redirect(
+      `${process.env.FRONTEND_URL}/login/success?token=${token}`,
+    ); */
+
+    // 3. Setear cookie httpOnly:
+    res.cookie('access_token', token, { httpOnly: true });
+    return res.redirect(process.env.FRONTEND_URL!);
+  }
 }
+
+
