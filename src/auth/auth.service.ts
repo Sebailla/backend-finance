@@ -389,7 +389,6 @@ export class AuthService {
   }
 
 
-
   //? -  Generador de JWT Token. ---------------
 
   private generateJwt(payload: JwtPayload) {

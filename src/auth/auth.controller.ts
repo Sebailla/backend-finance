@@ -89,12 +89,12 @@ export class AuthController {
   @Auth()
   checkAuthStatus(
     @GetUser('id') id: string,
-  ){
+  ) {
     return this.authService.checkAuthStatus(id)
   }
 
 
-//?--------- Google Auth -----------------------------------------
+  //?--------- Google Auth -----------------------------------------
 
 
   // Paso 1: Redirige a Google
@@ -110,18 +110,8 @@ export class AuthController {
   googleCallback(@Req() req: Request, @Res() res: Response) {
     // req.user viene de validate()
     const { user, token } = req.user as any
-
-    // 👇 Tenés varias opciones:
-    // 1. Mandar JSON directo al frontend:
-    // return res.json({ user, token });
-
-    // 2. Redirigir con el token en query:
-    /*  return res.redirect(
-      `${process.env.FRONTEND_URL}/login/success?token=${token}`,
-    ); */
-
     // 3. Setear cookie httpOnly:
-    res.cookie('access_token', token, { httpOnly: true });
+    res.cookie('access_token', token, { httpOnly: true, secure: true, sameSite: 'lax' });
     return res.redirect(process.env.FRONTEND_URL!);
   }
 }

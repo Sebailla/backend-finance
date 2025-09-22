@@ -10,6 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import googleOauthConfig from './config/google-oauth.config';
 import { GoogleStrategy } from './strategies/google.strategy';
 
+
 @Module({
   imports: [
     ConfigModule,
@@ -27,10 +28,10 @@ import { GoogleStrategy } from './strategies/google.strategy';
         }
       }
     }),
-    ConfigModule.forFeature(googleOauthConfig)
+    ConfigModule.forFeature(googleOauthConfig),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy ],
   exports: [TypeOrmModule, JwtStrategy, GoogleStrategy, PassportModule, JwtModule]
 })
 export class AuthModule { }
